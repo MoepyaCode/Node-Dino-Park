@@ -1,51 +1,33 @@
-# DinoPark Maintenance Backend
+# Dino Park Project (Root Assignment)
 
-## Project Brief
+## Table of Contents
 
-DinoPark Maintenance Backend is designed to streamline park maintenance operations by providing a safe and efficient way to manage the park's facilities. It achieves this by processing logs from the NUDLS™ monitoring system, maintaining the state of dinosaurs and zones in a database, and exposing critical data through a RESTful API for frontend integration.
+1. [Introduction](#introduction)
+1. [Tech Stack](#tech-stack)
+2. [Setup Instructions](#setup-instructions)
 
----
+   2.1. [Prerequisites](#prerequisites)
 
-## Key Features
+   2.2. [Steps](#steps)
+3. [API Endpoints](#api-endpoints)
 
-1. **Zone Maintenance Tracking**: Monitors all zones to ensure they are maintained within a 30-day cycle.
-2. **Safety Monitoring**: Evaluates whether zones are safe for entry based on dinosaur activity and digestion states.
-3. **Integration with NUDLS™**: Processes events from the NUDLS™ monitoring feed, accounting for intermittent connectivity.
-4. **Resilient Database Management**: Stores park and dinosaur state persistently using PostgreSQL.
-5. **Comprehensive API**: RESTful CRUD endpoints for seamless frontend integration.
+   3.1. [Dinosaur Management](#dinosaur-management)
 
----
+   3.2. [Zone Management](#zone-management)
 
-## Questions
-1. Briefly explain how you approached the problem?
-   - My approach was to be able to make event based changes that affect both Zone and Dino.
-   - Meaning that I created a controller that changes both the Zone and Dino as the both share some common data.
-   - The best way of solving the problem was having an OOP appraoch that give more structure and allows for a better work flow.
-   - I used a Entity, Model, Service, Controller appoach:
-      - __Entity__: Table in the DB
-      - __Models__: Interface and Types used across the project
-      - __Services__: The business Logic
-      - __Controllers__: Directs API requests and responses
+   3.3. [Event Management](#event-management)
+4. [Questions](#questions)
 
-
-2. What you would do differently if you had to do it again?
-   - I would implement unit testing.
-
-3. What you learned during the project?
-   - I have learned how to better handle race condition issues and concurrency.
-
-4. How you think we can improve this challenge:
-   - I believe that the challenge can be improve by having the NUDls API have more data and more requirements can be added.
-   
-___
+## Introduction
+This project implements the requirements of Dino Park, to ensure that the company has a reliable data source that can be used by the frontend to inform the park staff of the events of the park. The overral completion of this project is a highlight of my technical ability having used the least amount of AI possible throughout the project.
 
 ## Tech Stack
 
-- **Node.js**: Backend runtime environment.
-- **TypeScript**: Ensures type safety and robust development.
-- **TypeORM**: Object-relational mapper for PostgreSQL.
-- **PostgreSQL**: Relational database for storing data.
-- **Docker & Docker Compose**: Containerization for consistent environments.
+- **Node.js**
+- **TypeScript**
+- **TypeORM**
+- **PostgreSQL**
+- **Docker & Docker Compose**
 
 ---
 
@@ -53,8 +35,10 @@ ___
 
 ### Prerequisites
 
-1. Install **Node.js** (>=16.x) and **npm**.
-2. Install **Docker** and **Docker Compose**.
+1. Install `Node.js` (>=16.x) and `npm`.
+2. Install `Docker` and `Docker Compose`.
+
+   2.1. We use Docker to containerize the Postgres Database.
 
 ### Steps
 
@@ -107,9 +91,9 @@ ___
 
 The project runs on http://locahost:3000
 
-### Dinosaur Management (DinoController)
+### Dinosaur Management
 
-Manage dinosaurs in the park.
+Manage dinosaurs in the park. This is managed by `DinoController`
 
 | Method | Endpoint     | Description               |
 | ------ | ------------ | ------------------------- |
@@ -118,9 +102,9 @@ Manage dinosaurs in the park.
 
 #### Input Examples:
 
-- GET`/dinos`: **NA**
+- GET `/dinos`:  **NA**
 
-- GET`/dinos/:id`: **params** -- `/dinos/5`
+- GET `/dinos/:id`:  **params** -- `/dinos/5`
   ```
      {
         id: 5
@@ -129,9 +113,9 @@ Manage dinosaurs in the park.
 
 ---
 
-### Zone Management (ZoneController)
+### Zone Management
 
-Track and manage park zones.
+Track and manage park zones. This is managed by `ZoneController`
 
 | Method | Endpoint           | Description                             |
 | ------ | ------------------ | --------------------------------------- |
@@ -151,9 +135,9 @@ Track and manage park zones.
 
 ---
 
-### Event Management (EventController)
+### Event Management 
 
-Manage events related to dinosaurs and zones.
+Manage events related to dinosaurs and zones. This is managed by `EventController`
 
 | Method | Endpoint                              | Description                                    |
 | ------ | ------------------------------------- | ---------------------------------------------- |
@@ -218,54 +202,77 @@ Manage events related to dinosaurs and zones.
   ```
 
 ## Technical Considerations
+These questions were answered without the use of Chatgpt or AI help.
 
-### 1. Ensuring High Availability (99.99% Uptime Guarantee)
+1. `Question` Given that lives depend on this software, Park Technical has insisted on a 99.99% uptime
+guarantee. What would you do to make the service more resilient?
 
-To meet a **99.99% uptime guarantee**, we would focus on making the system resilient through various strategies:
+   - In order to put lives first and focus on 99.99% availability, having used AWS I believe that AWS has good measures that handle **availability and scalability**.
+   - I look to ensure that the instance auto scales the instance and database that it uses, in order to manage **load balancing**.
+   - There various auto-scaling and loading balancing types within AWS if it happens that a cost effective solution is need whilst maintaining the load-balancing capabilities that the Park Technical personnel requires.
+   - Another implementation that can improve high availability is have **instances in different regions** so that if a region in us-east-1 goes down then it can default to the next closest alternative for example us-west-2.
 
-1. **Load Balancing**: We would distribute traffic across multiple application servers to ensure that if one server fails, others can seamlessly take over. This ensures continuous availability without downtime.
+2. `Question` The Mainland Park, which houses the largest number of dinosaurs, wants to roll this out
+assuming the first version is a success. It’s expected that the park will house more than 1
+million dinosaurs in the next 12 months. What would you change to handle this level of scale
+on the system. Or rather, what do you expect to break, given the solution you provided?
 
-2. **Database Replication**: Implement a primary-replica database setup, where the primary database handles write operations, and replicas handle read operations. If the primary database goes down, the system can automatically switch to a replica with minimal disruption.
+   -  Considering the scale of increase in Dinosaurs, I assume that the park might want to expand its existing zones. Here is what I would break in this case:
+      
+      - Currently the number of Zones is fixed and is initialized **(Column: A-Z -- Rows: 0-15)** on the start of the project **zoneService.init()**, I would change this to be more dynamic and allow for more Zones to be added.
 
-3. **Caching**: By using caching solutions like **Redis** or **Memcached**, frequently accessed data is stored in-memory, reducing the load on the database and ensuring faster response times. This approach also helps in providing data even if the database temporarily goes offline.
+3. `Question` Someone recommended that we use FireBase. Park Technical has no idea what this is, but
+has asked for your advice on whether to implement this or not. What is your
+recommendation?
 
-4. **Health Checks and Auto-recovery**: Regular health checks for the system ensure early detection of issues. Tools like **Kubernetes** or similar orchestrators can then automatically restart any services that are down, reducing downtime and maintaining service reliability.
+   -  The use of Firebase is mainly dependent on the needs of the Park Technical.
+   -  From my experience:
+   
+      **Benefits:**
+      - Firebase is good for a quick start to a project and avoiding the challenges that a developer might experience when it comes to setting up an entirely new environment.
+      - It comes with a lot of add on features such as Authentication, Storage, Real time database, functions etc.
 
-5. **CDN Integration**: Using a Content Delivery Network (CDN) allows static content (images, videos, etc.) to be served from locations closer to the end-users, reducing load on the backend and improving the speed and reliability of content delivery.
+      **Disadvtages:**
+      - There may be rigidness in how certain things are implemented such requiring specific things such as a custom emailing system as an example.
+      - For this you would need to extend your system by using node to run firebase functions that will and register those functions.
+      - Firebase does not use relational databases. This is not good considering the data structure and storing that Dino Park needs.
 
-6. **Disaster Recovery Plan**: It is critical to have a robust disaster recovery plan. Regular database backups and multi-region deployment ensure that even in the case of a catastrophic failure, the system can recover with minimal data loss and downtime.
+      **Advice:**
+      - As much as firebase is a quick easy start; however, it would be better for Dino Park to have a single environment that can be built using a collection of different tech stacks.
+      - This allows more control of your stack and environment.
 
----
+## Questions
+These questions were answered without the use of Chatgpt or AI help.
 
-### 2. Scaling for 1 Million Dinosaurs
 
-If the park expects to scale to house **1 million dinosaurs** in the next year, the system would need several adjustments to handle this level of traffic and data:
+1. __Briefly explain how you approached the problem?__
+   - I started by breaking the project into smaller components and functionality:
+      - First, successfully add, feed, change location and remove Dino. **(includes error handling)**
+      - Secondly, event and combined that with changes of Zone.
+   - My approach was to be able to make event based changes that affect both Zone and Dino. 
+      - This means that there is a main controller `(EventController)` that handles API calls that affect both Zone and Dinosaur.
+      - This also means there is a main service `(EventService)` that controls the logic between Zone and Dino.
+   
+   - The best way of solving the problem was having an OOP approach that gives more structure and allows for a better workflow.
+   - I used a Entity, Model, Service, Controller appoach:
+      - `Entity`: Table in the DB
+      - `Models`: Interface and Types used across the project
+      - `Services`: The business Logic
+      - `Controllers`: Directs API requests and responses
 
-1. **Database Optimization**: We would partition the database (both horizontally and vertically) to ensure that large datasets are split efficiently across multiple systems. Optimizing indexes for faster search and retrieval would also be necessary.
 
-2. **Microservices Architecture**: Moving away from a monolithic architecture, we would break down the application into microservices. This allows different services to scale independently and focus on specific tasks, such as handling dinosaur data, zone management, and event logging.
+2. What you would do differently if you had to do it again?
+   - I would add cron node to run a cron job that will fetch data from the NUDLs api every hour.
+   - I would implement unit testing
+   - I would create a class that implements the Error interface so that I can return better responses for both successful and non-successful status. 
+   - I would have locked commonly used methods such as getLocationById.
+   - I would added all logs to the database after sync
 
-3. **Event-Driven Architecture**: Adopting an event-driven architecture with systems like **RabbitMQ** or **Kafka** would help manage a high throughput of events, such as dinosaur movements and feeding events, without overloading the system.
+3. What you learned during the project?
+   - I have learned to better handle race conditions which I faced in the `/events/sync` call that syncs the API Feed to the database. This is by using `Promise.race()` and also setting a `timeout` 
 
-4. **Asynchronous Processing**: Many operations can be performed asynchronously, such as processing large batches of dinosaur data or handling NUDLS™ feed updates. This would offload intensive operations from the main thread and improve responsiveness.
+4. How you think we can improve this challenge:
+   - I believe that the challenge can be improve by having the NUDls API have more data and more requirements can be added.
+   
+___
 
-5. **Horizontal Scaling**: To manage a growing number of requests, we would deploy multiple instances of our services. Horizontal scaling allows us to add more servers as the demand increases, ensuring that the application remains responsive even during peak times.
-
-6. **Load Testing and Monitoring**: Conducting stress tests and load testing with tools like **JMeter** or **Gatling** will help identify bottlenecks before they become a problem. Additionally, implementing robust monitoring tools ensures the system can be adjusted as needed to handle the increased load.
-
----
-
-### 3. Recommendation on Firebase
-
-When considering whether to implement **Firebase**, it is essential to understand what it offers and whether it fits the use case:
-
-- **Pros of Firebase**:
-
-  - Firebase provides real-time data syncing, which could be useful for tracking dinosaur movements and statuses in real-time.
-  - It offers features like **Authentication**, **Database**, **Hosting**, and **Cloud Functions**, which can help reduce the operational burden of managing infrastructure.
-
-- **Cons of Firebase**:
-  - Firebase is a fully managed service, which means it may lack the flexibility needed for complex customizations or large-scale deployments.
-  - It may not be the best choice for handling complex relational data and queries, such as those required to track millions of dinosaurs and zones. For such needs, a more robust relational database like PostgreSQL would be preferable.
-
-**Recommendation**: Firebase could be useful for certain aspects of the system, like real-time features, but for complex database management and scalability at the scale of millions of dinosaurs, we would recommend using a more traditional database system like **PostgreSQL**. Firebase could be used as a secondary tool for specific use cases (e.g., real-time notifications), but not as the primary database solution.

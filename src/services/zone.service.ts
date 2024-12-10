@@ -6,7 +6,6 @@ import { DinoService } from "./dino.service";
 
 export class ZoneService implements ZoneServiceI {
     private zoneRepository = AppDataSource.getRepository(Zone)
-    private zoneLocks = new Map<string, Promise<Zone>>()
 
     init = async (): Promise<void> => {
         const response = await this.getAllZones()
@@ -40,21 +39,6 @@ export class ZoneService implements ZoneServiceI {
     }
 
     getZoneByLocation = async (location: string): Promise<Zone> => {
-        if (this.zoneLocks.has(location)) {
-            return this.zoneLocks.get(location)!;
-        }
-
-        const zonePromise = this.fetchZoneData(location);
-        this.zoneLocks.set(location, zonePromise);
-
-        try {
-            return await zonePromise;
-        } finally {
-            this.zoneLocks.delete(location);
-        }
-    }
-
-    private fetchZoneData = async (location: string): Promise<Zone> => {
         const data = await this.zoneRepository.findOneBy({ location })
         console.log(`Zone data retrieved: ${location}`); // Log query result
         if (!data) throw new Error('Zone does not exist!')

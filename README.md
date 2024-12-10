@@ -16,6 +16,29 @@ DinoPark Maintenance Backend is designed to streamline park maintenance operatio
 
 ---
 
+## Questions
+1. Briefly explain how you approached the problem?
+   - My approach was to be able to make event based changes that affect both Zone and Dino.
+   - Meaning that I created a controller that changes both the Zone and Dino as the both share some common data.
+   - The best way of solving the problem was having an OOP appraoch that give more structure and allows for a better work flow.
+   - I used a Entity, Model, Service, Controller appoach:
+      - __Entity__: Table in the DB
+      - __Models__: Interface and Types used across the project
+      - __Services__: The business Logic
+      - __Controllers__: Directs API requests and responses
+
+
+2. What you would do differently if you had to do it again?
+   - I would implement unit testing.
+
+3. What you learned during the project?
+   - I have learned how to better handle race condition issues and concurrency.
+
+4. How you think we can improve this challenge:
+   - I believe that the challenge can be improve by having the NUDls API have more data and more requirements can be added.
+   
+___
+
 ## Tech Stack
 
 - **Node.js**: Backend runtime environment.

@@ -208,8 +208,8 @@ These questions were answered without the use of Chatgpt or AI help.
 guarantee. What would you do to make the service more resilient?
 
    - In order to put lives first and focus on 99.99% availability, having used AWS I believe that AWS has good measures that handle **availability and scalability**.
-   - I look to ensure that the instance auto scales the instance and database that it uses, in order to manage **load balancing**.
-   - There various auto-scaling and loading balancing types within AWS if it happens that a cost effective solution is need whilst maintaining the load-balancing capabilities that the Park Technical personnel requires.
+   - I would look to ensure that the instances are auto-scaled `(including database)`, in order to manage **load balancing**.
+   - There various auto-scaling and loading balancing types within AWS if it happens that a cost effective solution is needed whilst maintaining the load-balancing capabilities that the Park Technical personel requires.
    - Another implementation that can improve high availability is have **instances in different regions** so that if a region in us-east-1 goes down then it can default to the next closest alternative for example us-west-2.
 
 2. `Question` The Mainland Park, which houses the largest number of dinosaurs, wants to roll this out
@@ -265,14 +265,13 @@ These questions were answered without the use of Chatgpt or AI help.
    - I would add cron node to run a cron job that will fetch data from the NUDLs api every hour.
    - I would implement unit testing
    - I would create a class that implements the Error interface so that I can return better responses for both successful and non-successful status. 
-   - I would have locked commonly used methods such as getLocationById.
-   - I would added all logs to the database after sync
+   - I would have locked commonly used methods such as getLocationById (Concurrency Handling).
+   - I would added all logs to the database after sync to ensure that on running sync that it check if the logs exist first.
 
 3. What you learned during the project?
    - I have learned to better handle race conditions which I faced in the `/events/sync` call that syncs the API Feed to the database. This is by using `Promise.race()` and also setting a `timeout` 
 
 4. How you think we can improve this challenge:
    - I believe that the challenge can be improve by having the NUDls API have more data and more requirements can be added.
-   
 ___
 

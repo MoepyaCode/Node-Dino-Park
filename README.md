@@ -170,6 +170,15 @@ Manage events related to dinosaurs and zones.
      }
   ```
 
+- PATCH`/events/location_update/dinos/:id`: **params & body** -- `/events/location_update/dinos/20`
+
+  ```
+     {
+        location: A16,
+     }
+  ```
+
+
 - PATCH`/events/maintenance/zones/:location`: **params** -- `/events/maintenance/zones/A16`
 
   ```

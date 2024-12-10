@@ -73,6 +73,10 @@ DinoPark Maintenance Backend is designed to streamline park maintenance operatio
 
    ```
    npm run start
+6. **Clear the Database**:
+
+   ```
+   docker-compose down && docker-compose up -d
    ```
 
 ## API Endpoints

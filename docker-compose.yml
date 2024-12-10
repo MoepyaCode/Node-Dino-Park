@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: root-assignment
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: dino-park
+    ports:
+      - '5432:5432'

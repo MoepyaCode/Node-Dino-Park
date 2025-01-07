@@ -69,6 +69,6 @@ export class ZoneService implements ZoneServiceI {
 
         zone.last_maintenance_time = currentDateTime
 
-        return await this.zoneRepository.save(zone)
+        return this.zoneRepository.save(zone)
     }
 }

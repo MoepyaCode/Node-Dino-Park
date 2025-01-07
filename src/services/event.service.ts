@@ -79,7 +79,7 @@ export class EventService implements EventServiceI {
     maintenanceUpdateHandler = async (event: EventType): Promise<Zone> => {
         try {
             const { location } = event
-            return await this.zoneService.maintenanceUpdate(location)
+            return this.zoneService.maintenanceUpdate(location)
         } catch (error) {
             throw new Error(error.message)
         }
@@ -142,6 +142,6 @@ export class EventService implements EventServiceI {
 
     private updateZoneSimplified = async (dino: Dino): Promise<Zone> => {
         const dinos = await this.dinoService.getAllDinosInZone(dino.location)
-        return await this.zoneService.updateZone(dino.location, dinos)
+        return this.zoneService.updateZone(dino.location, dinos)
     }
 }

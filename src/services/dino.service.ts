@@ -36,7 +36,7 @@ export class DinoService implements DinoServiceI {
             }
         }
 
-        return await this.dinoRepository.save(dino)
+        return this.dinoRepository.save(dino)
     }
 
     feedDino = async (id: number): Promise<Dino> => {
@@ -70,8 +70,8 @@ export class DinoService implements DinoServiceI {
 
         const currentDateTime = new Date()
         const lastMealTime = new Date(dino.last_meal_time)
-        const timeDifferenceHours = currentDateTime.getHours() - lastMealTime.getHours()
-        const remainingTime = dino.digestion_period_in_hours - timeDifferenceHours
+        const timeDiffInMilliSecs = currentDateTime.getTime() - lastMealTime.getTime()
+        const remainingTime = dino.digestion_period_in_hours - (timeDiffInMilliSecs / (1000 * 60 * 60))
         return remainingTime > 2 ? remainingTime : null
     }
 

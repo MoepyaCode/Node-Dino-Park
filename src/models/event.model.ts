@@ -68,9 +68,9 @@ export interface EventServiceI {
     /**
      * Handles the syncing of the API (https://dinoparks.herokuapp.com/nudls/feed)
      * Syncs the API to data to the Database
-     * @returns void
+     * @returns boolean
      */
-    syncFeed: () => Promise<void>
+    syncFeed: () => Promise<boolean>
 }
 
 /**
@@ -129,5 +129,5 @@ export interface EventControllerI {
      * @param next 
      * @returns Object of the affected Dino and Zone
      */
-    syncFeed: (request: Request, response: Response, next: NextFunction) => Promise<void>
+    syncFeed: (request: Request, response: Response, next: NextFunction) => Promise<boolean>
 }

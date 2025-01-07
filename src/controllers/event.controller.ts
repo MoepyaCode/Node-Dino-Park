@@ -10,7 +10,7 @@ export class EventController implements EventControllerI {
         this.eventService = new EventService()
     }
 
-    syncFeed = (request: Request, response: Response, next: NextFunction): Promise<void> => {
+    syncFeed = (request: Request, response: Response, next: NextFunction): Promise<boolean> => {
         return this.eventService.syncFeed()
     }
 

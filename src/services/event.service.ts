@@ -85,7 +85,7 @@ export class EventService implements EventServiceI {
         }
     }
 
-    syncFeed = async (): Promise<void> => {
+    syncFeed = async (): Promise<boolean> => {
         try {
             const eventFeed = await apiFetcher()
             const sortedFeed = this.sortedEvents(eventFeed as EventListType)
@@ -93,6 +93,8 @@ export class EventService implements EventServiceI {
             for (const event of sortedFeed) {
                 await this.eventHandler(event)
             }
+
+            return true
         } catch (error) {
             throw new Error(error)
         }
@@ -107,34 +109,30 @@ export class EventService implements EventServiceI {
      * @param event 
      */
     private eventHandler = async (event: EventType): Promise<void> => {
-        const timeoutMs = 5000;
         console.log(`\nHandling event: ${event.kind}, ${event.id ? 'Location: ' : 'ID:'} ${(event.id || event.dinosaur_id) ? event.id ?? event.dinosaur_id : event.location}`);
 
         try {
-            await Promise.race([
-                (async () => {
-                    switch (event.kind) {
-                        case 'dino_added':
-                            await this.addDinoHandler(event);
-                            break;
-                        case 'dino_location_updated':
-                            await this.updateDinoLocationHandler(event);
-                            break;
-                        case 'dino_fed':
-                            await this.feedDinoHandler(event);
-                            break;
-                        case 'dino_removed':
-                            await this.removeDinoHandler(event);
-                            break;
-                        case 'maintenance_performed':
-                            await this.maintenanceUpdateHandler(event);
-                            break;
-                        default:
-                            throw new Error('Unknown event kind!');
-                    }
-                })(),
-                new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeoutMs))
-            ]);
+            
+            switch (event.kind) {
+                case 'dino_added':
+                    await this.addDinoHandler(event);
+                    break;
+                case 'dino_location_updated':
+                    await this.updateDinoLocationHandler(event);
+                    break;
+                case 'dino_fed':
+                    await this.feedDinoHandler(event);
+                    break;
+                case 'dino_removed':
+                    await this.removeDinoHandler(event);
+                    break;
+                case 'maintenance_performed':
+                    await this.maintenanceUpdateHandler(event);
+                    break;
+                default:
+                    throw new Error('Unknown event kind!');
+            }
+
             console.log(`Event handled: ${event.kind}, ${event.id ? 'Location: ' : 'ID:'} ${(event.id || event.dinosaur_id) ? event.id ?? event.dinosaur_id : event.location}\n`);
         } catch (error) {
             console.error(`Error: ${error.message}, Event: ${event.kind}, ${event.id ? 'Location: ' : 'ID:'} ${(event.id || event.dinosaur_id) ? event.id ?? event.dinosaur_id : event.location}\n`);
